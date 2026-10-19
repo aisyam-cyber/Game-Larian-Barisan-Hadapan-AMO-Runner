@@ -150,15 +150,15 @@
 
     const groundY = 340;
     
-    // PELARASAN MOD MUDAH: Graviti 0.38 (lebih ringan) & JumpPower -9.2 (lompatan terkawal)
-    let runner = { x: 40, y: groundY - 35, w: 35, h: 35, dy: 0, gravity: 0.38, jumpPower: -9.2, isJumping: false };
+    // TETAPAN SWEET SPOT: Graviti 0.48 & JumpPower -10 (Lompatan pantas dan tepat)
+    let runner = { x: 40, y: groundY - 35, w: 35, h: 35, dy: 0, gravity: 0.48, jumpPower: -10, isJumping: false };
     let obstacles = [];
     let items = [];
     let frame = 0;
     let score = 0;
     
-    // Kelajuan awal diperlahankan kepada 2.2 (asal 3.5)
-    let gameSpeed = 2.2; 
+    // Kelajuan permulaan dinaikkan ke 2.9 (Cukup lincah tapi adil)
+    let gameSpeed = 2.9; 
     let gameOver = false;
     let gameStarted = false;
 
@@ -179,7 +179,7 @@
       if (!gameStarted || gameOver) return;
 
       frame++;
-      gameSpeed += 0.0006; // Pertambahan kelajuan yang lebih perlahan
+      gameSpeed += 0.0008; // Kelajuan bertambah sedikit demi sedikit secara konsisten
 
       runner.dy += runner.gravity;
       runner.y += runner.dy;
@@ -190,9 +190,9 @@
         runner.isJumping = false;
       }
 
-      // Selang masa kemunculan halangan dinaikkan supaya tidak terlalu rapat di awal
-      if (frame % Math.floor(120 / (gameSpeed * 0.5)) === 0) {
-        if (Math.random() < 0.6) createObstacle();
+      // Frekuensi kemunculan halangan dinaikkan supaya permainan senantiasa ada cabaran
+      if (frame % Math.max(45, Math.floor(100 / (gameSpeed * 0.4))) === 0) {
+        if (Math.random() < 0.65) createObstacle();
         else createItem();
       }
 
@@ -201,9 +201,9 @@
         obs.x -= gameSpeed;
 
         if (
-          runner.x < obs.x + obs.w - 5 &&
-          runner.x + runner.w - 5 > obs.x &&
-          runner.y < obs.y + obs.h - 5 &&
+          runner.x < obs.x + obs.w - 6 &&
+          runner.x + runner.w - 6 > obs.x &&
+          runner.y < obs.y + obs.h - 6 &&
           runner.y + runner.h > obs.y
         ) {
           endGame();
@@ -228,7 +228,7 @@
         if (it.x < -30) { items.splice(i, 1); i--; }
       }
 
-      score += 0.1;
+      score += 0.12;
     }
 
     function draw() {
@@ -290,7 +290,7 @@
     function mulaGame() {
       score = 0;
       frame = 0;
-      gameSpeed = 2.2;
+      gameSpeed = 2.9;
       obstacles = [];
       items = [];
       runner.y = groundY - runner.h;
@@ -332,7 +332,7 @@
           if (!data || data.length === 0) return;
 
           if (data[0]) { document.getElementById("p1-name").innerText = data[0].nama; document.getElementById("p1-daerah").innerText = data[0].daerah || "-"; document.getElementById("p1-kat").innerText = (data[0].kategori === "Warga KKM") ? data[0].jawatan : "Orang Awam"; document.getElementById("p1-score").innerText = data[0].score + " pts"; }
-          if (data[1]) { document.getElementById("p2-name").innerText = data[1].nama; document.getElementById("p2-daerah").innerText = data[1].daerah || "-"; document.getElementById("p2-kat").innerText = (data[1].kategori === "Warga KKM") ? data[1].jawatan : "Orang Awam"; document.getElementById("p2-score").innerText = data[1].score + " pts"; }
+          if (data[1]) { document.getElementById("p2-name").innerText = data[1].nama; document.getElementById("p2-daerah").innerText = data[1].daerah || "-"; document.getElementById("p2-kat").innerText = (data[0].kategori === "Warga KKM") ? data[1].jawatan : "Orang Awam"; document.getElementById("p2-score").innerText = data[1].score + " pts"; }
           if (data[2]) { document.getElementById("p3-name").innerText = data[2].nama; document.getElementById("p3-daerah").innerText = data[2].daerah || "-"; document.getElementById("p3-kat").innerText = (data[2].kategori === "Warga KKM") ? data[2].jawatan : "Orang Awam"; document.getElementById("p3-score").innerText = data[2].score + " pts"; }
 
           let rankListHTML = "";
