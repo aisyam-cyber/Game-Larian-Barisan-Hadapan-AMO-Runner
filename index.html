@@ -101,7 +101,7 @@
     <button class="btn-submit" onclick="hantarSkor()">Hantar Skor 🏆</button>
     <p id="statusMsg" style="margin-top: 8px; font-size: 12px; text-align: center; font-weight: bold;"></p>
     
-    <!-- BUTANG CUBA LAGI / MAIN SEMULA -->
+    <!-- BUTANG MAIN SEMULA / CUBA LAGI -->
     <button class="btn-retry" onclick="mulaGame()">🔄 Main Semula / Cuba Lagi</button>
   </div>
 
@@ -146,15 +146,19 @@
     const ctx = canvas.getContext("2d");
 
     // PASTE URL GOOGLE APPS SCRIPT ANDA DI SINI
-    const SCRIPT_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbx6GbCG0BBZ--ezTgarEQD35pk71NdKjbV30kHYZKEJet0-bY27S6FAAWSw_CiP2vCp/exec";
+    const SCRIPT_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbyyJM-sleI1vsmssdYNUUHB58mY5ix8WYAQ5oFf06hxz-jd2N8g35CvdR61i4rmX7RM/exec";
 
     const groundY = 340;
-    let runner = { x: 40, y: groundY - 35, w: 35, h: 35, dy: 0, gravity: 0.6, jumpPower: -11, isJumping: false };
+    
+    // PELARASAN MOD MUDAH: Graviti 0.38 (lebih ringan) & JumpPower -9.2 (lompatan terkawal)
+    let runner = { x: 40, y: groundY - 35, w: 35, h: 35, dy: 0, gravity: 0.38, jumpPower: -9.2, isJumping: false };
     let obstacles = [];
     let items = [];
     let frame = 0;
     let score = 0;
-    let gameSpeed = 3.5;
+    
+    // Kelajuan awal diperlahankan kepada 2.2 (asal 3.5)
+    let gameSpeed = 2.2; 
     let gameOver = false;
     let gameStarted = false;
 
@@ -168,14 +172,14 @@
 
     function createItem() {
       let icon = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-      items.push({ x: canvas.width, y: groundY - 80 - Math.random() * 40, w: 25, h: 25, icon: icon, collected: false });
+      items.push({ x: canvas.width, y: groundY - 80 - Math.random() * 30, w: 25, h: 25, icon: icon, collected: false });
     }
 
     function update() {
       if (!gameStarted || gameOver) return;
 
       frame++;
-      gameSpeed += 0.001;
+      gameSpeed += 0.0006; // Pertambahan kelajuan yang lebih perlahan
 
       runner.dy += runner.gravity;
       runner.y += runner.dy;
@@ -186,8 +190,9 @@
         runner.isJumping = false;
       }
 
-      if (frame % Math.floor(1000 / (gameSpeed * 10)) === 0) {
-        if (Math.random() < 0.7) createObstacle();
+      // Selang masa kemunculan halangan dinaikkan supaya tidak terlalu rapat di awal
+      if (frame % Math.floor(120 / (gameSpeed * 0.5)) === 0) {
+        if (Math.random() < 0.6) createObstacle();
         else createItem();
       }
 
@@ -196,9 +201,9 @@
         obs.x -= gameSpeed;
 
         if (
-          runner.x < obs.x + obs.w &&
-          runner.x + runner.w > obs.x &&
-          runner.y < obs.y + obs.h &&
+          runner.x < obs.x + obs.w - 5 &&
+          runner.x + runner.w - 5 > obs.x &&
+          runner.y < obs.y + obs.h - 5 &&
           runner.y + runner.h > obs.y
         ) {
           endGame();
@@ -285,7 +290,7 @@
     function mulaGame() {
       score = 0;
       frame = 0;
-      gameSpeed = 3.5;
+      gameSpeed = 2.2;
       obstacles = [];
       items = [];
       runner.y = groundY - runner.h;
